@@ -1,0 +1,4 @@
+## Requirements
+
+* mecab
+* mecab-ipadic
