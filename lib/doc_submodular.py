@@ -16,7 +16,7 @@ class DocSubmodular(object):
 
     # fdoc
     def calculate(self, s):
-        _lambda = 10.5
+        _lambda = 4
         return self.relevance(s) + _lambda * self.redundancy(s)
 
     def cost(self, i):
@@ -25,7 +25,10 @@ class DocSubmodular(object):
     def cost_sum(self, s):
         if len(s) == 0:
             return 0
-        return functools.reduce(lambda x, y: x + self.cost(y), s)
+        sum = functools.reduce(lambda x, y: x + self.cost(y), s, 0)
+        print(s)
+        print(sum)
+        return sum
 
     def make_clusters(self):
         analyzer = Analyzer(self._texts)
