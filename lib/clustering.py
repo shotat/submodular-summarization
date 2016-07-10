@@ -43,7 +43,7 @@ class Analyzer:
             km = KMeans(
                 n_clusters=self.num_clusters,
                 init='k-means++',
-                n_init=20,
+                n_init=10,
                 verbose=True
                 )
         km.fit(X)

@@ -2,6 +2,7 @@ from lib.sentence_similarity import SentenceSimilarity
 import lib.mecab_util as mecab_util
 from lib.clustering import Analyzer
 import functools
+import math
 
 class DocSubmodular(object):
 
@@ -11,11 +12,11 @@ class DocSubmodular(object):
         self.len = len(self._texts)
         self._v_vec = [1] * self.len
         self._memo = [[-1 for i in range(self.len)] for j in range(self.len)]
-        self._labels = self.cluster_labels()
+        self._labels = self.make_labels()
 
     # fdoc
     def calculate(self, s):
-        _lambda = 0.2
+        _lambda = 10.5
         return self.relevance(s) + _lambda * self.redundancy(s)
 
     def cost(self, i):
@@ -26,7 +27,11 @@ class DocSubmodular(object):
             return 0
         return functools.reduce(lambda x, y: x + self.cost(y), s)
 
-    def cluster_labels(self):
+    def make_clusters(self):
+        analyzer = Analyzer(self._texts)
+        return analyzer.make_cluster()
+
+    def make_labels(self):
         analyzer = Analyzer(self._texts)
         clusters = analyzer.make_cluster()
         labels = [-1] * len(self._texts)
@@ -34,8 +39,10 @@ class DocSubmodular(object):
             for (label, cluster) in enumerate(clusters):
                 if text in cluster:
                     labels[idx] = label
-        print(labels)
         return labels
+
+    def label_num(self, idx):
+        return self._labels[idx]
 
     def s_vec_gen(self, s):
         z = [0] * self.len
@@ -56,7 +63,13 @@ class DocSubmodular(object):
 
     # R(S) redundancy
     def redundancy(self, s):
-        return 0
+        labels = list(map(lambda x: self._labels[x], s))
+        print (labels)
+        m = max(labels)
+        acc = 0
+        for i in range(m):
+            acc += math.sqrt(labels.count(i))
+        return acc
 
     # C(S)
     def cover(self, sentence_num, set_vec):

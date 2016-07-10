@@ -22,15 +22,15 @@ class Main(object):
                 if tmp > tmp_max:
                     tmp_max = tmp
                     idx_max = i
-            print(tmp_max, texts[idx_max])
+            # print(tmp_max, texts[idx_max])
             s.append(idx_max)
         return s_
 
 if __name__ == '__main__':
-    filename = 'sample.txt' # sys.argv[1]
+    filename = 'recruit.txt' # sys.argv[1]
     texts = open(filename).readlines()
 
-    result = Main.greedy_search(140, texts)
+    result = Main.greedy_search(100, texts)
     for idx in result:
         print(texts[idx])
 
