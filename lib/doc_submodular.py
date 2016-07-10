@@ -4,15 +4,16 @@ from lib.clustering import Analyzer
 import functools
 import math
 
+
 class DocSubmodular(object):
 
     def __init__(self, texts, params):
-        self._gumma = params['gumma']
-        self._texts = texts
-        self.len = len(self._texts)
-        self._v_vec = [1] * self.len
-        self._memo = [[-1 for i in range(self.len)] for j in range(self.len)]
-        self._labels = self.make_labels()
+        self.gumma = params['gumma']
+        self.texts = texts
+        self.len = len(self.texts)
+        self.v_vec = [1] * self.len
+        self.memo = [[-1 for i in range(self.len)] for j in range(self.len)]
+        self.labels = self._make_labels()
 
     # fdoc
     def calculate(self, s):
@@ -30,22 +31,20 @@ class DocSubmodular(object):
         print(sum)
         return sum
 
-    def make_clusters(self):
-        analyzer = Analyzer(self._texts)
-        return analyzer.make_cluster()
+    # private
 
-    def make_labels(self):
-        analyzer = Analyzer(self._texts)
+    def _make_labels(self):
+        analyzer = Analyzer(self.texts)
         clusters = analyzer.make_cluster()
-        labels = [-1] * len(self._texts)
-        for (idx, text) in enumerate(self._texts):
+        labels = [-1] * len(self.texts)
+        for (idx, text) in enumerate(self.texts):
             for (label, cluster) in enumerate(clusters):
                 if text in cluster:
                     labels[idx] = label
         return labels
 
     def label_num(self, idx):
-        return self._labels[idx]
+        return self.labels[idx]
 
     def s_vec_gen(self, s):
         z = [0] * self.len
@@ -59,15 +58,15 @@ class DocSubmodular(object):
         acc = 0
         for i in range(self.len):
             s_r = self.cover(i, s_vec)
-            v_r = self._gumma * self.cover(i, self._v_vec)
+            v_r = self.gumma * self.cover(i, self.v_vec)
             result = min(s_r, v_r)
             acc += result
         return acc
 
     # R(S) redundancy
     def redundancy(self, s):
-        labels = list(map(lambda x: self._labels[x], s))
-        print (labels)
+        labels = list(map(lambda x: self.labels[x], s))
+        print(labels)
         m = max(labels)
         acc = 0
         for i in range(m):
@@ -76,19 +75,19 @@ class DocSubmodular(object):
 
     # C(S)
     def cover(self, sentence_num, set_vec):
-        sentence = self._texts[sentence_num]
+        sentence = self.texts[sentence_num]
         acc = 0
         for (idx, elem) in enumerate(set_vec):
             if elem == 0:
                 continue
-            if self._memo[sentence_num][idx] < 0:
+            if self.memo[sentence_num][idx] < 0:
                 ss = SentenceSimilarity(
-                        mecab_util.extractNoun(sentence),
-                        mecab_util.extractNoun(self._texts[idx]))
+                    mecab_util.extractNoun(sentence),
+                    mecab_util.extractNoun(self.texts[idx]))
                 r = ss.distance()
-                self._memo[sentence_num][idx] = r
-                self._memo[idx][sentence_num] = r
-            acc += self._memo[sentence_num][idx]
+                self.memo[sentence_num][idx] = r
+                self.memo[idx][sentence_num] = r
+            acc += self.memo[sentence_num][idx]
         return acc
 
 
@@ -98,6 +97,6 @@ if __name__ == '__main__':
     file = open(filename).read()
     texts = open(filename).readlines()
 
-    d = DocSubmodular(texts, { 'gumma': 0.3 })
-    r = d.calculate([1,2,3,4,5,6])
+    d = DocSubmodular(texts, {'gumma': 0.3})
+    r = d.calculate([1, 2, 3])
     print(r)

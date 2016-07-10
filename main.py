@@ -1,10 +1,12 @@
 from lib.doc_submodular import DocSubmodular
-import sys
+
 
 class Main(object):
+    """main class"""
+
     def greedy_search(k, texts):
-        params = { 'gumma' : 0.5 }
-        doc_submodular = DocSubmodular(texts, params);
+        params = {'gumma': 0.5}
+        doc_submodular = DocSubmodular(texts, params)
         # step 0
         s = []
         s_ = []
@@ -18,7 +20,8 @@ class Main(object):
             for i in range(doc_submodular.len):
                 if i in s:
                     continue
-                tmp = doc_submodular.calculate(s + [i]) / doc_submodular.cost(i)
+                tmp = doc_submodular.calculate(s + [i]) / \
+                    doc_submodular.cost(i)
                 if tmp > tmp_max:
                     tmp_max = tmp
                     idx_max = i
@@ -27,11 +30,9 @@ class Main(object):
         return s_
 
 if __name__ == '__main__':
-    filename = 'recruit.txt' # sys.argv[1]
+    filename = 'recruit.txt'
     texts = open(filename).readlines()
 
     result = Main.greedy_search(100, texts)
     for idx in result:
         print(texts[idx])
-
-

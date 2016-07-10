@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import MeCab
 
+
 def extractNoun(text):
     """
        @input: sentence
@@ -8,7 +9,7 @@ def extractNoun(text):
     """
     MecabMode = '-Ochasen'
     tagger = MeCab.Tagger(MecabMode)
-    tagger.parse('') # これ重要！！！！
+    tagger.parse('')  # これ重要！！！！
 
     node = tagger.parseToNode(text)
     keywords = []
@@ -27,4 +28,4 @@ if __name__ == '__main__':
     feature_words = extractNoun(file)
     for x in feature_words:
         pass
-        #print(x)
+        # print(x)
