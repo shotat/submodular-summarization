@@ -30,7 +30,7 @@ class Main(object):
         return s_
 
 if __name__ == '__main__':
-    filename = 'recruit.txt'
+    filename = 'sample.txt'
     texts = open(filename).readlines()
 
     result = Main.greedy_search(100, texts)
